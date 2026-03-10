@@ -27,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.only(top: 60, left: 24, right: 24, bottom: 20),
             sliver: SliverToBoxAdapter(
               child: const Text(
-                'Settings',
+                'Ajustes',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
@@ -75,8 +75,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Aero User', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AeroColors.darkText)),
-              Text('Optimistic & Forward-thinking', style: TextStyle(color: AeroColors.mutedText)),
+              const Text('Usuario Aero', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AeroColors.darkText)),
+              Text('Optimista y Visionario', style: TextStyle(color: AeroColors.mutedText)),
             ],
           )
         ],
@@ -92,24 +92,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-            child: Text('PREFERENCES', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AeroColors.waterBlue, letterSpacing: 1.2)),
+            child: Text('PREFERENCIAS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AeroColors.waterBlue, letterSpacing: 1.2)),
           ),
           _buildToggleTile(
-            title: 'Push Notifications',
+            title: 'Notificaciones Push',
             icon: Icons.notifications_active,
             value: _notifications,
             onChanged: (v) => setState(() => _notifications = v),
           ),
           const Divider(color: AeroColors.glassWhite),
           _buildToggleTile(
-            title: 'Auto Location',
+            title: 'Ubicación Automática',
             icon: Icons.location_on,
             value: _autoLocation,
             onChanged: (v) => setState(() => _autoLocation = v),
           ),
           const Divider(color: AeroColors.glassWhite),
           _buildToggleTile(
-            title: '24-Hour Time',
+            title: 'Formato 24 Horas',
             icon: Icons.access_time,
             value: _24HourTime,
             onChanged: (v) => setState(() => _24HourTime = v),
@@ -124,7 +124,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('AERO VOLUME', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AeroColors.natureGreen, letterSpacing: 1.2)),
+          Text('VOLUMEN AERO', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AeroColors.natureGreen, letterSpacing: 1.2)),
           const SizedBox(height: 16),
           Row(
             children: [

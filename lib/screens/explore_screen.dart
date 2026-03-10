@@ -21,7 +21,7 @@ class ExploreScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Discover Nature',
+                    'Descubre la Naturaleza',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
@@ -30,7 +30,7 @@ class ExploreScreen extends StatelessWidget {
                   ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.1),
                   const SizedBox(height: 8),
                   const Text(
-                    'Experience the harmony of Frutiger Aero',
+                    'Experimenta la armonía de Frutiger Aero',
                     style: TextStyle(
                       fontSize: 16,
                       color: AeroColors.mutedText,
@@ -164,7 +164,7 @@ class ExploreScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             GlossyButton(
-              text: 'View Collection',
+              text: 'Ver Colección',
               icon: Icons.photo_library,
               width: double.infinity,
               baseColor: item.iconColor,
@@ -189,23 +189,23 @@ class _NatureItem {
 
 const List<_NatureItem> _natureItems = [
   _NatureItem(
-    'Ocean Depths', Icons.water, AeroColors.waterBlue,
+    'Profundidades del Océano', Icons.water, AeroColors.waterBlue,
     LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [AeroColors.skyBlue, Color(0xFF0277BD)]),
-    'Crystal clear aquatic life and pure water textures representing the fluidity of the Aero design language.'
+    'Vida acuática cristalina y texturas de agua pura que representan la fluidez del diseño Aero.'
   ),
   _NatureItem(
-    'Lush Fields', Icons.grass, AeroColors.grassGreen,
+    'Campos Exuberantes', Icons.grass, AeroColors.grassGreen,
     AeroColors.freshGrassGradient,
-    'Rolling green hills and bright skies. A staple of mid-2000s desktop backgrounds.'
+    'Colinas verdes y cielos brillantes. Un básico de los fondos de escritorio de mediados de los 2000.'
   ),
   _NatureItem(
-    'Clear Skies', Icons.cloud, AeroColors.skyBlue,
+    'Cielos Despejados', Icons.cloud, AeroColors.skyBlue,
     AeroColors.brightSkyGradient,
-    'Optimistic open skies with fluffy clouds and lens flares highlighting the forward-thinking technology era.'
+    'Cielos abiertos optimistas con nubes esponjosas y destellos que resaltan la era tecnológica visionaria.'
   ),
   _NatureItem(
-    'Glass Bubbles', Icons.bubble_chart, AeroColors.sunnyYellow,
+    'Burbujas de Cristal', Icons.bubble_chart, AeroColors.sunnyYellow,
     LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [AeroColors.sunnyYellow, Color(0xFFFF9800)]),
-    'Translucent, floating spheres simulating bokeh and adding a sense of tactile depth and playfulness.'
+    'Esferas flotantes translúcidas que simulan el bokeh, añadiendo profundidad táctil y diversión.'
   ),
 ];

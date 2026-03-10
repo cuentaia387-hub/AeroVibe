@@ -1,53 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../models/weather_data.dart';
-import '../services/weather_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
-import '../widgets/weather_icon_widget.dart';
 
-class WeatherScreen extends StatefulWidget {
+class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
 
   @override
-  State<WeatherScreen> createState() => _WeatherScreenState();
-}
-
-class _WeatherScreenState extends State<WeatherScreen> {
-  final WeatherService _weatherService = WeatherService();
-  WeatherData? _weatherData;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchWeather();
-  }
-
-  Future<void> _fetchWeather() async {
-    try {
-      final data = await _weatherService.getWeatherData();
-      setState(() {
-        _weatherData = data;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: AeroColors.waterBlue));
-    }
-
-    if (_weatherData == null) {
-      return const Center(child: Text("Error loading 7-day forecast", style: TextStyle(color: AeroColors.darkText)));
-    }
-
-    final daily = _weatherData!.daily;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
@@ -57,7 +17,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             padding: const EdgeInsets.only(top: 60, left: 24, right: 24, bottom: 20),
             sliver: SliverToBoxAdapter(
               child: const Text(
-                '7-Day Forecast',
+                'Pronóstico (Demo)',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
@@ -73,10 +33,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildDailyCard(daily[index], index),
+                    child: _buildDailyCard(index),
                   );
                 },
-                childCount: daily.length,
+                childCount: 7,
               ),
             ),
           ),
@@ -86,9 +46,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  Widget _buildDailyCard(DailyForecast item, int index) {
-    final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    String dayName = index == 0 ? 'Today' : days[item.time.weekday - 1];
+  Widget _buildDailyCard(int index) {
+    final days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    final dayName = index == 0 ? 'Hoy' : days[(DateTime.now().weekday + index - 1) % 7];
+    
+    // Fake data for the aesthetic
+    final maxTemp = 25 - (index % 3);
+    final minTemp = 15 - (index % 2);
+    final icon = index % 2 == 0 ? Icons.wb_sunny_rounded : Icons.cloud_rounded;
+    final iconColor = index % 2 == 0 ? AeroColors.sunnyYellow : AeroColors.waterBlue;
 
     return GlassCard(
       child: Row(
@@ -101,12 +67,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AeroColors.darkText),
             ),
           ),
-          WeatherConditionIcon(code: item.code, size: 40, animate: false),
+          Icon(icon, size: 40, color: iconColor),
           Row(
             children: [
-              Text('${item.maxTemp.round()}°', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AeroColors.darkText)),
+              Text('$maxTemp°', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AeroColors.darkText)),
               const SizedBox(width: 8),
-              Text('${item.minTemp.round()}°', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AeroColors.mutedText)),
+              Text('$minTemp°', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AeroColors.mutedText)),
             ],
           )
         ],
