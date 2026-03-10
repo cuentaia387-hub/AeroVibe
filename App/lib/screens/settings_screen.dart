@@ -12,9 +12,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notifications = true;
-  bool _autoLocation = true;
+  bool _autoLocation = false;
   bool _24HourTime = true;
-  double _volume = 0.8;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +43,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildProfileCard(),
                   const SizedBox(height: 24),
                   _buildGeneralSettings(),
-                  const SizedBox(height: 24),
-                  _buildEnvironmentSettings(),
                   const SizedBox(height: 120), // Bottom padding for nav bar
                 ],
               ),
@@ -119,38 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ).animate().slideY(begin: 0.2, delay: 100.ms);
   }
 
-  Widget _buildEnvironmentSettings() {
-    return GlassCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('VOLUMEN AERO', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AeroColors.natureGreen, letterSpacing: 1.2)),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              const Icon(Icons.volume_down, color: AeroColors.mutedText),
-              Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: AeroColors.natureGreen,
-                    inactiveTrackColor: AeroColors.glassWhite,
-                    thumbColor: Colors.white,
-                    overlayColor: AeroColors.natureGreen.withOpacity(0.2),
-                    trackHeight: 6,
-                  ),
-                  child: Slider(
-                    value: _volume,
-                    onChanged: (v) => setState(() => _volume = v),
-                  ),
-                ),
-              ),
-              const Icon(Icons.volume_up, color: AeroColors.mutedText),
-            ],
-          )
-        ],
-      ),
-    ).animate().slideY(begin: 0.2, delay: 200.ms);
-  }
+
 
   Widget _buildToggleTile({required String title, required IconData icon, required bool value, required Function(bool) onChanged}) {
     return ListTile(
