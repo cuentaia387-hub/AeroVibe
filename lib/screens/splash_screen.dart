@@ -111,6 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       color: AeroColors.darkText,
                     ),
                   ),
+                  ),
                 ),
               ],
             ),
