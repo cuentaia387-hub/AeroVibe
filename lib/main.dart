@@ -55,6 +55,34 @@ class _MainNavigatorState extends State<MainNavigator> {
     const SettingsScreen(),
   ];
 
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _onBottomNavTapped(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_showSplash) {
@@ -100,13 +128,12 @@ class _MainNavigatorState extends State<MainNavigator> {
           // Global Bubble Particles
           const Positioned.fill(child: AnimatedBubbles(count: 12)),
 
-          // The Active Screen Layer
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: _screens[_currentIndex],
+          // The Active Screen Layer with Swipe Navigation
+          PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            physics: const BouncingScrollPhysics(),
+            children: _screens,
           ),
 
           // The Glassmorphic Bottom Nav
@@ -114,7 +141,7 @@ class _MainNavigatorState extends State<MainNavigator> {
             alignment: Alignment.bottomCenter,
             child: AeroBottomNavBar(
               currentIndex: _currentIndex,
-              onTap: (index) => setState(() => _currentIndex = index),
+              onTap: _onBottomNavTapped,
             ),
           ),
         ],
