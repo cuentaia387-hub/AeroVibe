@@ -1,74 +1,101 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../models/weather_data.dart';
+import '../services/weather_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
-import '../widgets/bubble_painter.dart';
-import '../widgets/glossy_button.dart';
 import '../widgets/weather_icon_widget.dart';
+import '../widgets/glossy_button.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  final weather = WeatherData.sample;
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnim;
+class _HomeScreenState extends State<HomeScreen> {
+  final WeatherService _weatherService = WeatherService();
+  WeatherData? _weatherData;
+  bool _isLoading = true;
+  String _error = '';
 
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..forward();
-    _fadeAnim = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
+    _fetchWeather();
   }
 
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    super.dispose();
+  Future<void> _fetchWeather() async {
+    setState(() {
+      _isLoading = true;
+      _error = '';
+    });
+    try {
+      final data = await _weatherService.getWeatherData();
+      setState(() {
+        _weatherData = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnim,
-      child: AnimatedBubbles(
-        count: 15,
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator(color: AeroColors.waterBlue));
+    }
+
+    if (_error.isNotEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 60),
+            const SizedBox(height: 16),
+            Text('Error loading weather data', style: TextStyle(color: AeroColors.darkText, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            GlossyButton(
+              text: 'Retry',
+              icon: Icons.refresh,
+              onPressed: _fetchWeather,
+              width: 150,
+            ),
+          ],
+        ),
+      );
+    }
+
+    final weather = _weatherData!;
+
+    // SingleChildScrollView allows scrolling through everything
+    return Scaffold(
+      backgroundColor: Colors.transparent, // Background handled by Main widget
+      body: RefreshIndicator(
+        onRefresh: _fetchWeather,
+        color: AeroColors.waterBlue,
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+          physics: const AlwaysScrollableScrollPhysics(), // Important for RefreshIndicator
+          padding: const EdgeInsets.only(top: 60, left: 24, right: 24, bottom: 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               _buildHeader(),
-              const SizedBox(height: 24),
-
-              // Main weather card
-              _buildMainWeatherCard(),
-              const SizedBox(height: 20),
-
-              // Stats row
-              _buildStatsRow(),
-              const SizedBox(height: 20),
-
-              // Hourly forecast 
-              _buildHourlyForecast(),
-              const SizedBox(height: 20),
-
-              // Nature highlights
-              _buildNatureHighlights(),
-              const SizedBox(height: 20),
-
-              // Action buttons
-              _buildActionButtons(),
+              const SizedBox(height: 30),
+              _buildMainWeatherCard(weather),
+              const SizedBox(height: 30),
+              _buildSectionTitle('Hourly Forecast'),
+              const SizedBox(height: 16),
+              _buildHourlyList(weather.hourly),
+              const SizedBox(height: 30),
+              _buildSectionTitle('Interaction Demo'),
+              const SizedBox(height: 16),
+              _buildInteractionArea(),
             ],
           ),
         ),
@@ -77,416 +104,162 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Good Morning ✨',
-              style: TextStyle(
-                fontFamily: 'Nunito',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AeroColors.textMuted,
-              ),
+        const Text(
+          'Good morning 👋',
+          style: TextStyle(
+            fontSize: 18,
+            color: AeroColors.mutedText,
+            fontWeight: FontWeight.w600,
+          ),
+        ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
+        const SizedBox(height: 4),
+        ShaderMask(
+          shaderCallback: (bounds) => AeroColors.brightSkyGradient.createShader(bounds),
+          child: const Text(
+            'Current Location', // API uses coords, so we generalize
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+              color: Colors.white, // Required for shader mask
             ),
-            const SizedBox(height: 2),
-            ShaderMask(
-              shaderCallback: (bounds) =>
-                  AeroColors.skyGradient.createShader(bounds),
-              child: const Text(
-                'Eden Valley',
-                style: TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-        GlossyIconButton(
-          icon: const Text('🔔', style: TextStyle(fontSize: 20)),
-          gradient: AeroColors.aquaGradient,
-          size: 48,
-          onPressed: () {},
-        ),
+          ),
+        ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1),
       ],
     );
   }
 
-  Widget _buildMainWeatherCard() {
+  Widget _buildMainWeatherCard(WeatherData weather) {
     return GlassCard(
-      borderRadius: 28,
       padding: const EdgeInsets.all(24),
-      shadows: [
-        BoxShadow(
-          color: AeroColors.primaryAqua.withOpacity(0.2),
-          blurRadius: 30,
-          offset: const Offset(0, 10),
-        ),
-        BoxShadow(
-          color: Colors.black.withOpacity(0.3),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ],
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${weather.temperature.toInt()}°',
+                    '${weather.currentTemp.round()}°',
                     style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 80,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      height: 0.9,
+                      fontSize: 64,
+                      fontWeight: FontWeight.w200, // Thin modern font
+                      color: AeroColors.waterBlue,
+                      letterSpacing: -3,
                     ),
                   ),
-                  const SizedBox(height: 4),
                   Text(
-                    weather.condition,
+                    weather.conditionString,
                     style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: AeroColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Feels like ${weather.feelsLike.toInt()}°',
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 13,
-                      color: AeroColors.textMuted,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AeroColors.darkText,
                     ),
                   ),
                 ],
               ),
-              WeatherConditionIcon(
-                condition: weather.conditionType,
-                size: 70,
-                animated: true,
+              WeatherConditionIcon(code: weather.weatherCode, size: 80),
+            ],
+          ),
+          const SizedBox(height: 24),
+          const Divider(color: AeroColors.glassWhite),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              WeatherStatCard(
+                icon: Icons.water_drop,
+                label: 'HUMIDITY',
+                value: '${weather.humidity}%',
+              ),
+              WeatherStatCard(
+                icon: Icons.air,
+                label: 'WIND',
+                value: '${weather.windSpeed.round()} km/h',
+                color: AeroColors.natureGreen,
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Progress bar style "weather quality bar"
-          _buildWeatherQualityBar(),
         ],
+      ),
+    ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack);
+  }
+  
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: AeroColors.darkText,
+      ),
+    ).animate().fadeIn(delay: 400.ms);
+  }
+
+  Widget _buildHourlyList(List<HourlyForecast> hourly) {
+    return SizedBox(
+      height: 140,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: hourly.length, // Show next 24 hours
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          final item = hourly[index];
+          final timeStr = '${item.time.hour.toString().padLeft(2, '0')}:00';
+          
+          return Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GlassCard(
+              width: 80,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(timeStr, style: const TextStyle(fontWeight: FontWeight.bold, color: AeroColors.mutedText)),
+                  WeatherConditionIcon(code: item.code, size: 36, animate: false),
+                  Text('${item.temp.round()}°', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AeroColors.darkText)),
+                ],
+              ),
+            ).animate().slideX(begin: 0.5, delay: (100 * index).ms),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildWeatherQualityBar() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Air Quality Index',
-          style: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 12,
-            color: AeroColors.textMuted,
+  Widget _buildInteractionArea() {
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Text(
+            'This button demonstrates interactive state in the Frutiger Aero aesthetic.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AeroColors.mutedText),
           ),
-        ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: LinearProgressIndicator(
-            value: weather.airQuality / 100,
-            backgroundColor: Colors.white.withOpacity(0.1),
-            valueColor: const AlwaysStoppedAnimation<Color>(AeroColors.natureGreen),
-            minHeight: 8,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'AQI ${weather.airQuality.toInt()} · Good',
-              style: const TextStyle(
-                fontFamily: 'Nunito',
-                fontSize: 11,
-                color: AeroColors.natureGreen,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              'UV ${weather.uvIndex}',
-              style: const TextStyle(
-                fontFamily: 'Nunito',
-                fontSize: 11,
-                color: AeroColors.textMuted,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatsRow() {
-    return Row(
-      children: [
-        Expanded(
-          child: GlassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            borderRadius: 20,
-            child: WeatherStatCard(
-              label: 'Humidity',
-              value: '${weather.humidity}',
-              unit: '%',
-              emoji: '💧',
-              accentColor: AeroColors.skyBlue,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: GlassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            borderRadius: 20,
-            child: WeatherStatCard(
-              label: 'Wind',
-              value: '${weather.windSpeed.toInt()}',
-              unit: ' km/h',
-              emoji: '💨',
-              accentColor: AeroColors.primaryAqua,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: GlassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            borderRadius: 20,
-            child: WeatherStatCard(
-              label: 'UV Index',
-              value: '${weather.uvIndex}',
-              unit: '',
-              emoji: '☀️',
-              accentColor: AeroColors.sunGold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHourlyForecast() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Hourly Forecast',
-          style: TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AeroColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 110,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: weather.hourly.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, index) {
-              final h = weather.hourly[index];
-              final isNow = index == 0;
-              return GlassCard(
-                width: 70,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                borderRadius: 18,
-                color: isNow ? AeroColors.primaryAqua : null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      h.time,
-                      style: TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: isNow ? Colors.white : AeroColors.textMuted,
-                      ),
-                    ),
-                    WeatherConditionIcon(
-                        condition: h.condition, size: 24),
-                    Text(
-                      '${h.temp.toInt()}°',
-                      style: TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: isNow ? Colors.white : AeroColors.textPrimary,
-                      ),
-                    ),
-                  ],
+          const SizedBox(height: 16),
+          GlossyButton(
+            text: 'Press Me!',
+            icon: Icons.touch_app,
+            width: double.infinity,
+            baseColor: AeroColors.natureGreen,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: AeroColors.waterBlue,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  content: const Text('Interaction recorded! Fully functional glossy button.', 
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
               );
             },
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNatureHighlights() {
-    final items = NatureItem.samples.take(2).toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Nature Highlights',
-              style: TextStyle(
-                fontFamily: 'Nunito',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AeroColors.textPrimary,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: const Text(
-                'See all →',
-                style: TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AeroColors.primaryAqua,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ...items.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: GlassCard(
-                padding: const EdgeInsets.all(16),
-                borderRadius: 20,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: LinearGradient(
-                          colors: [
-                            item.primaryColor,
-                            item.primaryColor.withOpacity(0.6),
-                          ],
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          item.emoji,
-                          style: const TextStyle(fontSize: 28),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.name,
-                            style: const TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AeroColors.textPrimary,
-                            ),
-                          ),
-                          Text(
-                            item.category,
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 12,
-                              color: item.primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            item.description,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 12,
-                              color: AeroColors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      children: [
-                        const Text('⭐', style: TextStyle(fontSize: 14)),
-                        Text(
-                          '${item.rating}',
-                          style: const TextStyle(
-                            fontFamily: 'Nunito',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AeroColors.sunGold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: GlossyButton(
-            label: 'Explore Nature',
-            icon: const Text('🌿', style: TextStyle(fontSize: 16)),
-            gradient: AeroColors.greenGradient,
-            onPressed: () {},
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: GlossyButton(
-            label: 'Full Forecast',
-            icon: const Text('🌤️', style: TextStyle(fontSize: 16)),
-            gradient: AeroColors.aquaGradient,
-            onPressed: () {},
-          ),
-        ),
-      ],
-    );
+        ],
+      ),
+    ).animate().fadeIn(delay: 800.ms);
   }
 }

@@ -2,164 +2,107 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AeroColors {
-  // Primary palette — aqua, sky blue, nature green
-  static const Color primaryAqua = Color(0xFF4ECDC4);
-  static const Color skyBlue = Color(0xFF45B7D1);
-  static const Color deepSkyBlue = Color(0xFF0EA5E9);
-  static const Color natureGreen = Color(0xFF6BCB77);
-  static const Color softGreen = Color(0xFF96CEB4);
+  // Authentic Frutiger Aero Bright Palette
+  static const Color skyBlue = Color(0xFF63B4D1);
+  static const Color brightCyan = Color(0xFF00E5FF);
+  static const Color natureGreen = Color(0xFF7CDB2A);
   static const Color grassGreen = Color(0xFF4CAF50);
-  static const Color mintGreen = Color(0xFFBEF1E5);
-
+  static const Color waterBlue = Color(0xFF29B6F6);
+  static const Color sunnyYellow = Color(0xFFFFD54F);
+  
   // Backgrounds
-  static const Color deepOcean = Color(0xFF0A1628);
-  static const Color nightBlue = Color(0xFF0F2044);
-  static const Color auroraBlue = Color(0xFF1A3A5C);
-  static const Color glassWhite = Color(0x26FFFFFF); // 15% white
-  static const Color glassBorder = Color(0x4DFFFFFF); // 30% white
-
-  // Accent & warm tones
-  static const Color sunGold = Color(0xFFFFD93D);
-  static const Color sunsetOrange = Color(0xFFFF6B6B);
-  static const Color softPurple = Color(0xFFC084FC);
-  static const Color auroraViolet = Color(0xFF8B5CF6);
-
-  // Text
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xB3FFFFFF); // 70% white
-  static const Color textMuted = Color(0x80FFFFFF); // 50% white
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color offWhite = Color(0xFFF0F8FF); // Alice Blue
+  static const Color glassWhite = Color(0x66FFFFFF); // 40% white
+  static const Color glassBorder = Color(0x80FFFFFF); // 50% white
+  static const Color darkText = Color(0xFF1E3A5F);
+  static const Color mutedText = Color(0xFF546E7A);
 
   // Gradients
-  static const LinearGradient skyGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF0EA5E9),
-      Color(0xFF4ECDC4),
-      Color(0xFF6BCB77),
-    ],
-  );
-
-  static const LinearGradient auroraGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF0F2044),
-      Color(0xFF1A3A5C),
-      Color(0xFF0EA5E9),
-      Color(0xFF4ECDC4),
-    ],
-    stops: [0.0, 0.3, 0.7, 1.0],
-  );
-
-  static const LinearGradient deepAuroraGradient = LinearGradient(
+  static const LinearGradient brightSkyGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF0A1628),
-      Color(0xFF0D2137),
-      Color(0xFF0E3356),
-      Color(0xFF1A4A6E),
+      Color(0xFF4FC3F7), // Light Blue
+      Color(0xFFE1F5FE), // Very Light Blue
+      Color(0xFFFFFFFF), // White horizon
     ],
   );
 
-  static const LinearGradient glossGradient = LinearGradient(
+  static const LinearGradient freshGrassGradient = LinearGradient(
     begin: Alignment.topCenter,
-    end: Alignment.center,
+    end: Alignment.bottomCenter,
     colors: [
-      Color(0x66FFFFFF), // 40% white
-      Color(0x00FFFFFF), // transparent
+      Color(0xFFAED581),
+      Color(0xFF7CB342),
     ],
   );
 
-  static const LinearGradient cardGradient = LinearGradient(
+  static const LinearGradient glossyWhiteGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0x33FFFFFF), // 20% white
-      Color(0x0DFFFFFF), // 5% white
-    ],
-  );
-
-  static const LinearGradient aquaGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF4ECDC4),
-      Color(0xFF45B7D1),
-    ],
-  );
-
-  static const LinearGradient greenGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF6BCB77),
-      Color(0xFF4CAF50),
-    ],
-  );
-
-  static const LinearGradient goldenGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFFFFD93D),
-      Color(0xFFFF8C42),
+      Color(0xE6FFFFFF), // 90% white
+      Color(0x80FFFFFF), // 50% white
     ],
   );
 }
 
 class AeroTheme {
-  static ThemeData get theme {
+  static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: const ColorScheme.dark(
-        primary: AeroColors.primaryAqua,
-        secondary: AeroColors.skyBlue,
-        tertiary: AeroColors.natureGreen,
-        surface: AeroColors.nightBlue,
+      brightness: Brightness.light,
+      colorScheme: const ColorScheme.light(
+        primary: AeroColors.waterBlue,
+        secondary: AeroColors.natureGreen,
+        tertiary: AeroColors.sunnyYellow,
+        surface: AeroColors.glassWhite,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onSurface: Colors.white,
+        onSurface: AeroColors.darkText,
       ),
-      scaffoldBackgroundColor: AeroColors.deepOcean,
+      scaffoldBackgroundColor: AeroColors.offWhite,
       fontFamily: GoogleFonts.nunito().fontFamily,
       textTheme: GoogleFonts.nunitoTextTheme(
         const TextTheme(
           displayLarge: TextStyle(
             fontWeight: FontWeight.w800,
-            color: AeroColors.textPrimary,
+            color: AeroColors.darkText,
             letterSpacing: -1.0,
           ),
           displayMedium: TextStyle(
             fontWeight: FontWeight.w700,
-            color: AeroColors.textPrimary,
+            color: AeroColors.darkText,
             letterSpacing: -0.5,
           ),
           headlineLarge: TextStyle(
             fontWeight: FontWeight.w700,
-            color: AeroColors.textPrimary,
+            color: AeroColors.darkText,
           ),
           headlineMedium: TextStyle(
             fontWeight: FontWeight.w600,
-            color: AeroColors.textPrimary,
+            color: AeroColors.darkText,
           ),
           titleLarge: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AeroColors.darkText,
+          ),
+          titleMedium: TextStyle(
             fontWeight: FontWeight.w600,
-            color: AeroColors.textPrimary,
+            color: AeroColors.darkText,
           ),
           bodyLarge: TextStyle(
-            fontWeight: FontWeight.w400,
-            color: AeroColors.textSecondary,
+            fontWeight: FontWeight.w600,
+            color: AeroColors.darkText,
           ),
           bodyMedium: TextStyle(
-            fontWeight: FontWeight.w400,
-            color: AeroColors.textSecondary,
+            fontWeight: FontWeight.w500,
+            color: AeroColors.mutedText,
           ),
           labelLarge: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AeroColors.textPrimary,
+            fontWeight: FontWeight.w700,
+            color: AeroColors.waterBlue,
             letterSpacing: 0.5,
           ),
         ),
@@ -167,13 +110,13 @@ class AeroTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AeroColors.darkText),
         titleTextStyle: TextStyle(
-          fontFamily: 'Nunito',
-          fontWeight: FontWeight.w700,
-          fontSize: 20,
-          color: Colors.white,
+          color: AeroColors.darkText,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: Colors.white),
       ),
     );
   }

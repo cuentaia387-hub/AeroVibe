@@ -1,243 +1,110 @@
-import 'dart:math' as math;
-import 'package:flutter/material.dart';
-
 class WeatherData {
-  final String city;
-  final double temperature;
-  final double feelsLike;
+  final double currentTemp;
+  final double apparentTemp;
   final int humidity;
   final double windSpeed;
-  final String condition;
-  final WeatherCondition conditionType;
-  final double uvIndex;
-  final double airQuality;
+  final int weatherCode;
+  
   final List<HourlyForecast> hourly;
   final List<DailyForecast> daily;
 
-  const WeatherData({
-    required this.city,
-    required this.temperature,
-    required this.feelsLike,
+  WeatherData({
+    required this.currentTemp,
+    required this.apparentTemp,
     required this.humidity,
     required this.windSpeed,
-    required this.condition,
-    required this.conditionType,
-    required this.uvIndex,
-    required this.airQuality,
+    required this.weatherCode,
     required this.hourly,
     required this.daily,
   });
 
-  static WeatherData get sample => WeatherData(
-        city: 'Eden Valley',
-        temperature: 22,
-        feelsLike: 24,
-        humidity: 68,
-        windSpeed: 12,
-        condition: 'Partly Cloudy',
-        conditionType: WeatherCondition.partlyCloudy,
-        uvIndex: 5.2,
-        airQuality: 42,
-        hourly: _sampleHourly,
-        daily: _sampleDaily,
-      );
+  factory WeatherData.fromJson(Map<String, dynamic> json) {
+    final current = json['current'];
+    final hourlyData = json['hourly'];
+    final dailyData = json['daily'];
 
-  static final List<HourlyForecast> _sampleHourly = [
-    HourlyForecast(time: 'Now', temp: 22, condition: WeatherCondition.partlyCloudy),
-    HourlyForecast(time: '13:00', temp: 24, condition: WeatherCondition.sunny),
-    HourlyForecast(time: '14:00', temp: 25, condition: WeatherCondition.sunny),
-    HourlyForecast(time: '15:00', temp: 24, condition: WeatherCondition.cloudy),
-    HourlyForecast(time: '16:00', temp: 21, condition: WeatherCondition.rainy),
-    HourlyForecast(time: '17:00', temp: 19, condition: WeatherCondition.rainy),
-    HourlyForecast(time: '18:00', temp: 18, condition: WeatherCondition.cloudy),
-    HourlyForecast(time: '19:00', temp: 16, condition: WeatherCondition.partlyCloudy),
-  ];
+    // Parse Hourly
+    List<HourlyForecast> hourlyList = [];
+    if (hourlyData != null) {
+      List<dynamic> times = hourlyData['time'];
+      List<dynamic> temps = hourlyData['temperature_2m'];
+      List<dynamic> codes = hourlyData['weather_code'];
+      
+      // Get the next 24 hours
+      for (int i = 0; i < 24 && i < times.length; i++) {
+        hourlyList.add(HourlyForecast(
+          time: DateTime.parse(times[i]),
+          temp: (temps[i] as num).toDouble(),
+          code: codes[i] as int,
+        ));
+      }
+    }
 
-  static final List<DailyForecast> _sampleDaily = [
-    DailyForecast(day: 'Today', high: 25, low: 15, condition: WeatherCondition.sunny, rain: 10),
-    DailyForecast(day: 'Tue', high: 22, low: 14, condition: WeatherCondition.partlyCloudy, rain: 20),
-    DailyForecast(day: 'Wed', high: 18, low: 12, condition: WeatherCondition.rainy, rain: 80),
-    DailyForecast(day: 'Thu', high: 20, low: 13, condition: WeatherCondition.cloudy, rain: 40),
-    DailyForecast(day: 'Fri', high: 24, low: 15, condition: WeatherCondition.sunny, rain: 5),
-    DailyForecast(day: 'Sat', high: 26, low: 16, condition: WeatherCondition.sunny, rain: 5),
-    DailyForecast(day: 'Sun', high: 23, low: 14, condition: WeatherCondition.partlyCloudy, rain: 15),
-  ];
+    // Parse Daily
+    List<DailyForecast> dailyList = [];
+    if (dailyData != null) {
+       List<dynamic> times = dailyData['time'];
+       List<dynamic> maxTemps = dailyData['temperature_2m_max'];
+       List<dynamic> minTemps = dailyData['temperature_2m_min'];
+       List<dynamic> codes = dailyData['weather_code'];
+
+       for (int i = 0; i < 7 && i < times.length; i++) {
+         dailyList.add(DailyForecast(
+           time: DateTime.parse(times[i]),
+           maxTemp: (maxTemps[i] as num).toDouble(),
+           minTemp: (minTemps[i] as num).toDouble(),
+           code: codes[i] as int,
+         ));
+       }
+    }
+
+    return WeatherData(
+      currentTemp: (current['temperature_2m'] as num).toDouble(),
+      apparentTemp: (current['apparent_temperature'] as num).toDouble(),
+      humidity: current['relative_humidity_2m'] as int,
+      windSpeed: (current['wind_speed_10m'] as num).toDouble(),
+      weatherCode: current['weather_code'] as int,
+      hourly: hourlyList,
+      daily: dailyList,
+    );
+  }
+
+  // WMO Weather interpretation codes
+  String get conditionString {
+    return getWeatherConditionString(weatherCode);
+  }
 }
 
 class HourlyForecast {
-  final String time;
+  final DateTime time;
   final double temp;
-  final WeatherCondition condition;
+  final int code;
 
-  const HourlyForecast({
-    required this.time,
-    required this.temp,
-    required this.condition,
-  });
+  HourlyForecast({required this.time, required this.temp, required this.code});
 }
 
 class DailyForecast {
-  final String day;
-  final double high;
-  final double low;
-  final WeatherCondition condition;
-  final int rain;
+  final DateTime time;
+  final double maxTemp;
+  final double minTemp;
+  final int code;
 
-  const DailyForecast({
-    required this.day,
-    required this.high,
-    required this.low,
-    required this.condition,
-    required this.rain,
+  DailyForecast({
+    required this.time,
+    required this.maxTemp,
+    required this.minTemp,
+    required this.code,
   });
 }
 
-enum WeatherCondition {
-  sunny,
-  partlyCloudy,
-  cloudy,
-  rainy,
-  stormy,
-  snowy,
-  windy,
-  night,
-}
-
-class NatureItem {
-  final String name;
-  final String category;
-  final String description;
-  final String emoji;
-  final List<String> tags;
-  final double rating;
-  final Color primaryColor;
-
-  const NatureItem({
-    required this.name,
-    required this.category,
-    required this.description,
-    required this.emoji,
-    required this.tags,
-    required this.rating,
-    required this.primaryColor,
-  });
-
-  static final List<NatureItem> samples = [
-    NatureItem(
-      name: 'Azure Morpho',
-      category: 'Butterfly',
-      description: 'The brilliant blue butterfly of the Amazon, known for its iridescent wings that shimmer like liquid mercury.',
-      emoji: '🦋',
-      tags: ['Rare', 'Amazon', 'Blue'],
-      rating: 4.9,
-      primaryColor: const Color(0xFF45B7D1),
-    ),
-    NatureItem(
-      name: 'Crystal Falls',
-      category: 'Waterfall',
-      description: 'A pristine waterfall cascading over ancient rocks, creating a natural glass curtain of pure mountain water.',
-      emoji: '💧',
-      tags: ['Water', 'Mountain', 'Pure'],
-      rating: 4.8,
-      primaryColor: const Color(0xFF4ECDC4),
-    ),
-    NatureItem(
-      name: 'Aurora Borealis',
-      category: 'Phenomenon',
-      description: 'Nature\'s own light show — dancing ribbons of emerald, violet and cyan across the arctic sky.',
-      emoji: '🌌',
-      tags: ['Arctic', 'Lights', 'Night'],
-      rating: 5.0,
-      primaryColor: const Color(0xFF8B5CF6),
-    ),
-    NatureItem(
-      name: 'Jade Forest',
-      category: 'Forest',
-      description: 'Ancient bamboo groves where light filters through in emerald shafts, painting everything in soft green hues.',
-      emoji: '🌿',
-      tags: ['Forest', 'Bamboo', 'Green'],
-      rating: 4.7,
-      primaryColor: const Color(0xFF6BCB77),
-    ),
-    NatureItem(
-      name: 'Pearl Jellyfish',
-      category: 'Marine',
-      description: 'Translucent creatures drifting in moonlit waters, their bioluminescent pulses lighting the dark ocean.',
-      emoji: '🪼',
-      tags: ['Ocean', 'Glow', 'Deep Sea'],
-      rating: 4.8,
-      primaryColor: const Color(0xFFC084FC),
-    ),
-    NatureItem(
-      name: 'Golden Meadow',
-      category: 'Meadow',
-      description: 'Endless fields of sunflowers swaying gently, their golden faces tracking the sun across a cloudless blue sky.',
-      emoji: '🌻',
-      tags: ['Flowers', 'Sun', 'Open'],
-      rating: 4.6,
-      primaryColor: const Color(0xFFFFD93D),
-    ),
-    NatureItem(
-      name: 'Twin Lakes',
-      category: 'Lake',
-      description: 'Mirror-perfect alpine lakes reflecting snow-capped peaks in crystal clarity — nature\'s own looking glass.',
-      emoji: '🏔️',
-      tags: ['Alpine', 'Mirror', 'Pure'],
-      rating: 4.9,
-      primaryColor: const Color(0xFF0EA5E9),
-    ),
-    NatureItem(
-      name: 'Coral Garden',
-      category: 'Marine',
-      description: 'A vibrant underwater metropolis of neon corals housing thousands of tropical fish in a kaleidoscope of color.',
-      emoji: '🐠',
-      tags: ['Coral', 'Tropical', 'Color'],
-      rating: 4.7,
-      primaryColor: const Color(0xFFFF6B6B),
-    ),
-  ];
-}
-
-class AeroParticle {
-  double x;
-  double y;
-  double radius;
-  double opacity;
-  double speed;
-  double dx;
-  double dy;
-  Color color;
-
-  AeroParticle({
-    required this.x,
-    required this.y,
-    required this.radius,
-    required this.opacity,
-    required this.speed,
-    required this.dx,
-    required this.dy,
-    required this.color,
-  });
-
-  static AeroParticle random(Size size) {
-    final rng = math.Random();
-    final colors = [
-      const Color(0xFF4ECDC4),
-      const Color(0xFF45B7D1),
-      const Color(0xFF6BCB77),
-      const Color(0xFFFFFFFF),
-      const Color(0xFF8B5CF6),
-      const Color(0xFFC084FC),
-    ];
-    return AeroParticle(
-      x: rng.nextDouble() * size.width,
-      y: rng.nextDouble() * size.height,
-      radius: rng.nextDouble() * 30 + 5,
-      opacity: rng.nextDouble() * 0.25 + 0.05,
-      speed: rng.nextDouble() * 0.5 + 0.1,
-      dx: (rng.nextDouble() - 0.5) * 0.5,
-      dy: -(rng.nextDouble() * 0.5 + 0.1),
-      color: colors[rng.nextInt(colors.length)],
-    );
-  }
+String getWeatherConditionString(int code) {
+  if (code == 0) return 'Clear sky';
+  if (code == 1 || code == 2 || code == 3) return 'Partly cloudy';
+  if (code >= 45 && code <= 48) return 'Foggy';
+  if (code >= 51 && code <= 55) return 'Drizzle';
+  if (code >= 61 && code <= 65) return 'Rain';
+  if (code >= 71 && code <= 77) return 'Snow';
+  if (code >= 80 && code <= 82) return 'Rain showers';
+  if (code >= 95) return 'Thunderstorm';
+  return 'Unknown';
 }

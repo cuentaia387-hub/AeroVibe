@@ -1,185 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../models/weather_data.dart';
 import '../theme/app_theme.dart';
 
 class WeatherConditionIcon extends StatelessWidget {
-  final WeatherCondition condition;
+  final int code;
   final double size;
-  final bool animated;
+  final bool animate;
 
   const WeatherConditionIcon({
-    super.key,
-    required this.condition,
-    this.size = 60,
-    this.animated = false,
-  });
-
-  String get emoji {
-    switch (condition) {
-      case WeatherCondition.sunny:
-        return '☀️';
-      case WeatherCondition.partlyCloudy:
-        return '⛅';
-      case WeatherCondition.cloudy:
-        return '☁️';
-      case WeatherCondition.rainy:
-        return '🌧️';
-      case WeatherCondition.stormy:
-        return '⛈️';
-      case WeatherCondition.snowy:
-        return '❄️';
-      case WeatherCondition.windy:
-        return '💨';
-      case WeatherCondition.night:
-        return '🌙';
-    }
-  }
-
-  Color get glowColor {
-    switch (condition) {
-      case WeatherCondition.sunny:
-        return AeroColors.sunGold;
-      case WeatherCondition.partlyCloudy:
-        return AeroColors.skyBlue;
-      case WeatherCondition.cloudy:
-        return Colors.grey.shade400;
-      case WeatherCondition.rainy:
-        return AeroColors.deepSkyBlue;
-      case WeatherCondition.stormy:
-        return AeroColors.auroraViolet;
-      case WeatherCondition.snowy:
-        return AeroColors.mintGreen;
-      case WeatherCondition.windy:
-        return AeroColors.primaryAqua;
-      case WeatherCondition.night:
-        return AeroColors.auroraViolet;
-    }
-  }
+    Key? key,
+    required this.code,
+    this.size = 64,
+    this.animate = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size * 1.4,
-      height: size * 1.4,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: glowColor.withOpacity(0.4),
-            blurRadius: size * 0.5,
-            spreadRadius: size * 0.1,
-          ),
-        ],
-      ),
-      child: animated
-          ? _AnimatedIcon(emoji: emoji, size: size)
-          : Center(
-              child: Text(emoji, style: TextStyle(fontSize: size * 0.75)),
-            ),
+    IconData iconData;
+    Color iconColor;
+    
+    // Simplistic icon mapping based on WMO code
+    if (code == 0) {
+      iconData = Icons.wb_sunny_rounded;
+      iconColor = AeroColors.sunnyYellow;
+    } else if (code >= 1 && code <= 3) {
+      iconData = Icons.cloud_queue_rounded; // partly cloudy
+      iconColor = AeroColors.skyBlue;
+    } else if (code >= 51 && code <= 65) {
+      iconData = Icons.water_drop_rounded; // rain
+      iconColor = AeroColors.waterBlue;
+    } else if (code >= 71 && code <= 77) {
+      iconData = Icons.ac_unit_rounded; // snow
+      iconColor = Colors.lightBlueAccent;
+    } else if (code >= 95) {
+      iconData = Icons.flash_on_rounded; // thunderstorm
+      iconColor = Colors.deepPurpleAccent;
+    } else {
+      iconData = Icons.cloud_rounded; // default cloudy/fog
+      iconColor = Colors.grey.shade400;
+    }
+
+    Widget icon = Icon(
+      iconData,
+      size: size,
+      color: iconColor,
+      shadows: [
+        Shadow(
+          color: iconColor.withOpacity(0.5),
+          blurRadius: 15,
+          offset: const Offset(0, 4),
+        )
+      ],
     );
-  }
-}
 
-class _AnimatedIcon extends StatefulWidget {
-  final String emoji;
-  final double size;
-  const _AnimatedIcon({required this.emoji, required this.size});
-
-  @override
-  State<_AnimatedIcon> createState() => _AnimatedIconState();
-}
-
-class _AnimatedIconState extends State<_AnimatedIcon>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat(reverse: true);
-    _scale = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _scale,
-      child: Center(
-        child: Text(widget.emoji, style: TextStyle(fontSize: widget.size * 0.75)),
-      ),
-    );
+    if (animate) {
+      return icon.animate(onPlay: (controller) => controller.repeat())
+        .shimmer(duration: 3000.ms, color: Colors.white.withOpacity(0.8))
+        .scaleXY(begin: 0.95, end: 1.05, duration: 2000.ms, curve: Curves.easeInOutSine)
+        .then()
+        .scaleXY(begin: 1.05, end: 0.95, duration: 2000.ms, curve: Curves.easeInOutSine);
+    }
+    
+    return icon;
   }
 }
 
 class WeatherStatCard extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String value;
-  final String unit;
-  final String emoji;
-  final Color? accentColor;
+  final Color color;
 
   const WeatherStatCard({
-    super.key,
+    Key? key,
+    required this.icon,
     required this.label,
     required this.value,
-    required this.unit,
-    required this.emoji,
-    this.accentColor,
-  });
+    this.color = AeroColors.waterBlue,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 22)),
-        const SizedBox(height: 4),
-        RichText(
-          text: TextSpan(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+          )
+        ]
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextSpan(
-                text: value,
-                style: TextStyle(
-                  fontFamily: 'Nunito',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
-                  color: accentColor ?? AeroColors.primaryAqua,
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: AeroColors.mutedText,
                 ),
               ),
-              TextSpan(
-                text: unit,
+              Text(
+                value,
                 style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  color: AeroColors.textMuted,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: AeroColors.darkText,
                 ),
               ),
             ],
           ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Nunito',
-            fontSize: 11,
-            color: AeroColors.textMuted,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -1,5 +1,5 @@
 name: aerovibe
-description: AeroVibe — A Frutiger Aero nature weather dashboard
+description: AeroVibe — A bright, authentic Frutiger Aero nature and weather dashboard
 version: 1.0.0+1
 publish_to: 'none'
 
@@ -10,30 +10,32 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Google Fonts (Nunito - closest to Frutiger typeface)
+  # Fonts
   google_fonts: ^6.2.1
 
   # Animations
   animate_do: ^3.3.4
   flutter_animate: ^4.5.0
 
-  # Blur / glassmorphism
+  # Glassmorphism
   glass_kit: ^3.0.0
 
   # Icons
   font_awesome_flutter: ^10.7.0
   cupertino_icons: ^1.0.8
 
+  # Networking & Real Data
+  http: ^1.2.0
+  geolocator: ^13.0.6
+  
   # State management
   provider: ^6.1.2
 
   # Particles / Effects
   simple_animations: ^5.0.2
 
-  # Smooth page indicator
+  # UI Utils
   smooth_page_indicator: ^1.2.0+3
-
-  # Math utils
   vector_math: ^2.1.4
 
 dev_dependencies:
@@ -46,22 +48,3 @@ flutter:
 
   assets:
     - assets/images/
-
-  # Fonts are loaded at runtime via google_fonts package.
-  # To bundle fonts locally for offline APK, download Nunito from
-  # https://fonts.google.com/specimen/Nunito and place .ttf files in
-  # assets/fonts/, then uncomment the section below:
-  #
-  # fonts:
-  #   - family: Nunito
-  #     fonts:
-  #       - asset: assets/fonts/Nunito-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/Nunito-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Nunito-Bold.ttf
-  #         weight: 700
-  #       - asset: assets/fonts/Nunito-ExtraBold.ttf
-  #         weight: 800
-  #       - asset: assets/fonts/Nunito-Light.ttf
-  #         weight: 300
