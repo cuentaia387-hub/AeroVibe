@@ -19,29 +19,67 @@ class _HomeScreenState extends State<HomeScreen> {
   WeatherData? _weatherData;
   bool _isLoading = true;
   String _error = '';
+  
+  // Real-time clock support
+  late DateTime _currentTime;
+  Timer? _timer;
+  
+  // Background weather update support
+  Timer? _weatherUpdateTimer;
 
   @override
   void initState() {
     super.initState();
+    _currentTime = DateTime.now();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _currentTime = DateTime.now();
+        });
+      }
+    });
+
+    // Auto-update weather every 15 minutes seamlessly in the background
+    _weatherUpdateTimer = Timer.periodic(const Duration(minutes: 15), (timer) {
+      if (mounted) {
+        _fetchWeather(isBackground: true);
+      }
+    });
+
     _fetchWeather();
   }
 
-  Future<void> _fetchWeather() async {
-    setState(() {
-      _isLoading = true;
-      _error = '';
-    });
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _weatherUpdateTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchWeather({bool isBackground = false}) async {
+    if (!isBackground) {
+      setState(() {
+        _isLoading = true;
+        _error = '';
+      });
+    }
     try {
       final data = await _weatherService.getWeatherData();
-      setState(() {
-        _weatherData = data;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _weatherData = data;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          if (!isBackground) {
+            _error = e.toString();
+          }
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -104,17 +142,48 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
+    String formatTime(DateTime time) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      final second = time.second.toString().padLeft(2, '0');
+      return '$hour:$minute:$second';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Good morning 👋',
-          style: TextStyle(
-            fontSize: 18,
-            color: AeroColors.mutedText,
-            fontWeight: FontWeight.w600,
-          ),
-        ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Good morning 👋',
+              style: TextStyle(
+                fontSize: 18,
+                color: AeroColors.mutedText,
+                fontWeight: FontWeight.w600,
+              ),
+            ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
+            
+            // The Real-Time live clock
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white, width: 1),
+              ),
+              child: Text(
+                formatTime(_currentTime),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AeroColors.waterBlue,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ).animate().fadeIn(duration: 500.ms),
+          ],
+        ),
         const SizedBox(height: 4),
         ShaderMask(
           shaderCallback: (bounds) => AeroColors.brightSkyGradient.createShader(bounds),

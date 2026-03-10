@@ -27,14 +27,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          // Very bright sky background
-          gradient: AeroColors.brightSkyGradient,
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      backgroundColor: AeroColors.waterBlue,
+      body: SizedBox.expand(
+        child: Container(
+          decoration: const BoxDecoration(
+            // Very bright sky background
+            gradient: AeroColors.brightSkyGradient,
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
             // Floating bubbles in background
             const Positioned.fill(child: AnimatedBubbles(count: 15)),
             
