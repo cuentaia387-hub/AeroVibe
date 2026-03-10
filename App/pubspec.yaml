@@ -1,0 +1,49 @@
+name: aerovibe
+description: AeroVibe — A bright, authentic Frutiger Aero nature and weather dashboard
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Animations
+  animate_do: ^3.3.4
+  flutter_animate: ^4.5.0
+
+  # Glassmorphism
+  glass_kit: ^3.0.0
+
+  # Icons
+  font_awesome_flutter: ^10.7.0
+  cupertino_icons: ^1.0.8
+
+  # Networking & Real Data
+  http: ^1.2.0
+  
+  # State management
+  provider: ^6.1.2
+
+  # Particles / Effects
+  simple_animations: ^5.0.2
+
+  # UI Utils
+  smooth_page_indicator: ^1.2.0+3
+  vector_math: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
