@@ -41,10 +41,10 @@ class AeroBottomNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(0, Icons.dashboard_rounded, 'Home'),
-                _buildNavItem(1, Icons.explore_rounded, 'Explore'),
-                _buildNavItem(2, Icons.cloud_rounded, 'Weather'),
-                _buildNavItem(3, Icons.settings_rounded, 'Settings'),
+                _buildNavItem(0, Icons.dashboard_rounded, 'Inicio'),
+                _buildNavItem(1, Icons.explore_rounded, 'Explorar'),
+                _buildNavItem(2, Icons.cloud_rounded, 'Clima'),
+                _buildNavItem(3, Icons.settings_rounded, 'Ajustes'),
               ],
             ),
           ),

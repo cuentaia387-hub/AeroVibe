@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   FadeInUp(
                     delay: const Duration(milliseconds: 1000),
                     child: const Text(
-                      'OPTIMISM & NATURE',
+                      'OPTIMISMO Y NATURALEZA',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

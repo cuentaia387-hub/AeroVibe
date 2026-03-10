@@ -51,11 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 40),
             _buildMainClockCard(),
             const SizedBox(height: 40),
-            _buildSectionTitle('Daily Inspiration'),
+            _buildSectionTitle('Inspiración Diaria'),
             const SizedBox(height: 16),
             _buildInspirationCard(),
             const SizedBox(height: 30),
-            _buildSectionTitle('Interactive Elements'),
+            _buildSectionTitle('Elementos Interactivos'),
             const SizedBox(height: 16),
             _buildInteractionArea(),
           ],
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Welcome to the future 👋',
+          'Bienvenido al futuro 👋',
           style: TextStyle(
             fontSize: 18,
             color: AeroColors.mutedText,
@@ -162,9 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildMiniStatus(Icons.wb_sunny_rounded, 'Mood', 'Sunny', AeroColors.waterBlue),
+              _buildMiniStatus(Icons.wb_sunny_rounded, 'Humor', 'Soleado', AeroColors.waterBlue),
               Container(width: 1, height: 40, color: AeroColors.glassWhite),
-              _buildMiniStatus(Icons.air_rounded, 'Vibe', 'Fresh', AeroColors.natureGreen),
+              _buildMiniStatus(Icons.air_rounded, 'Vibra', 'Fresco', AeroColors.natureGreen),
             ],
           ),
         ],
@@ -213,12 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Technology & Nature',
+                  'Tecnología y Naturaleza',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AeroColors.darkText),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Living in harmony with clean energy and glossy interfaces.',
+                  'Viviendo en armonía con energía limpia e interfaces brillantes.',
                   style: TextStyle(color: AeroColors.mutedText, height: 1.3),
                 ),
               ],
@@ -229,35 +229,85 @@ class _HomeScreenState extends State<HomeScreen> {
     ).animate().slideX(begin: 0.3, delay: 600.ms);
   }
 
+  bool _isQuoteRevealed = false;
+
   Widget _buildInteractionArea() {
     return GlassCard(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Text(
-            'This button demonstrates interactive state in the Frutiger Aero aesthetic.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AeroColors.mutedText),
-          ),
-          const SizedBox(height: 16),
-          GlossyButton(
-            text: 'Press Me!',
-            icon: Icons.touch_app,
-            width: double.infinity,
-            baseColor: AeroColors.waterBlue,
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: AeroColors.natureGreen,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  content: const Text('Interaction recorded! Fully functional glossy button.', 
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOutBack,
+        child: Column(
+          children: [
+            Text(
+              _isQuoteRevealed 
+                ? 'El secreto del diseño Aero'
+                : 'Descubre más sobre este estilo',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AeroColors.darkText,
+                fontWeight: FontWeight.bold,
+                fontSize: 16
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (!_isQuoteRevealed) ...[
+              const Text(
+                'Presiona el botón para revelar un dato curioso sobre la estética Frutiger Aero.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AeroColors.mutedText, fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              GlossyButton(
+                text: 'Revelar Dato',
+                icon: Icons.auto_awesome,
+                width: double.infinity,
+                baseColor: AeroColors.waterBlue,
+                onPressed: () {
+                  setState(() {
+                    _isQuoteRevealed = true;
+                  });
+                },
+              ),
+            ] else ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.white.withOpacity(0.8)),
                 ),
-              );
-            },
-          ),
-        ],
+                child: const Column(
+                  children: [
+                    Icon(Icons.format_quote_rounded, color: AeroColors.waterBlue, size: 30),
+                    SizedBox(height: 8),
+                    Text(
+                      'El Frutiger Aero (2004-2013) se caracterizaba por su optimismo corporativo, skeuomorfismo excesivo, texturas brillantes, fotografías de naturaleza (especialmente agua y hierba), bolitas de cristal y auroras. Representaba un futuro donde la tecnología y la naturaleza coexistían en perfecta armonía fluida.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: AeroColors.darkText,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2),
+              const SizedBox(height: 16),
+              GlossyButton(
+                text: 'Ocultar',
+                icon: Icons.visibility_off,
+                width: double.infinity,
+                baseColor: AeroColors.mutedText,
+                onPressed: () {
+                  setState(() {
+                    _isQuoteRevealed = false;
+                  });
+                },
+              ),
+            ],
+          ],
+        ),
       ),
     ).animate().fadeIn(delay: 800.ms);
   }
