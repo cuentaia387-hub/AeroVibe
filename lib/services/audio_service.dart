@@ -13,20 +13,24 @@ class AudioService {
   Future<void> playClick() async {
     if (!isSoundEnabled) return;
     try {
+      print('AudioService: Intentando reproducir click.mp3');
       await _clickPlayer.stop();
+      // En versiones recientes de audioplayers, el AssetSource asume carpeta assets/
+      // pero a veces prefiere el path relativo completo según la configuración.
       await _clickPlayer.play(AssetSource('audio/click.mp3'));
     } catch (e) {
-      print('Error playing click sound: $e');
+      print('AudioService Error (click): $e');
     }
   }
 
   Future<void> playChime() async {
     if (!isSoundEnabled) return;
     try {
+      print('AudioService: Intentando reproducir chime.mp3');
       await _chimePlayer.stop();
       await _chimePlayer.play(AssetSource('audio/chime.mp3'));
     } catch (e) {
-      print('Error playing chime sound: $e');
+      print('AudioService Error (chime): $e');
     }
   }
   
