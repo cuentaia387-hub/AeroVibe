@@ -29,7 +29,6 @@ dependencies:
   
   # State management
   provider: ^6.1.2
-  uuid: ^4.3.3
 
   # Particles / Effects
   simple_animations: ^5.0.2

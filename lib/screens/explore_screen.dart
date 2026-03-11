@@ -124,6 +124,7 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
       ),
       child: TabBar(
         controller: _tabController,
+        dividerColor: Colors.transparent,
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: Colors.white.withOpacity(0.6),
@@ -217,56 +218,50 @@ class _NoteCard extends StatelessWidget {
       },
       child: GlassCard(
         padding: const EdgeInsets.all(16),
-        child: Container(
-          // Subtle color tint based on the note's color property
-          decoration: BoxDecoration(
-            color: note.color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (note.title.isNotEmpty)
-                Text(
-                  note.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AeroColors.darkText,
-                  ),
-                ),
-              if (note.title.isNotEmpty) const SizedBox(height: 8),
-              Expanded(
-                child: Text(
-                  note.content,
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AeroColors.mutedText,
-                    height: 1.4,
-                  ),
+        tintColor: note.color,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (note.title.isNotEmpty)
+              Text(
+                note.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: AeroColors.darkText,
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${note.createdAt.day}/${note.createdAt.month}/${note.createdAt.year}',
-                    style: TextStyle(fontSize: 10, color: AeroColors.mutedText.withOpacity(0.6), fontWeight: FontWeight.bold),
-                  ),
-                  Icon(
-                    note.isArchived ? Icons.archive : Icons.edit_note_rounded,
-                    size: 16,
-                    color: AeroColors.waterBlue.withOpacity(0.5),
-                  )
-                ],
-              )
-            ],
-          ),
+            if (note.title.isNotEmpty) const SizedBox(height: 8),
+            Expanded(
+              child: Text(
+                note.content,
+                maxLines: 5,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AeroColors.mutedText,
+                  height: 1.4,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${note.createdAt.day}/${note.createdAt.month}/${note.createdAt.year}',
+                  style: TextStyle(fontSize: 10, color: AeroColors.mutedText.withOpacity(0.6), fontWeight: FontWeight.bold),
+                ),
+                Icon(
+                  note.isArchived ? Icons.archive : Icons.edit_note_rounded,
+                  size: 16,
+                  color: AeroColors.waterBlue.withOpacity(0.5),
+                )
+              ],
+            )
+          ],
         ),
       ),
     );

@@ -110,44 +110,41 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                     padding: const EdgeInsets.all(24),
                     child: GlassCard(
                       padding: const EdgeInsets.all(20),
-                      child: Container(
-                        // Tint the editor with the selected color
-                        color: _selectedColor.withOpacity(0.05),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: _titleController,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AeroColors.darkText,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Título vibrante...',
-                                hintStyle: TextStyle(color: AeroColors.mutedText.withOpacity(0.5)),
-                                border: InputBorder.none,
-                              ),
+                      tintColor: _selectedColor,
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _titleController,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AeroColors.darkText,
                             ),
-                            const Divider(color: AeroColors.glassWhite, thickness: 2),
-                            TextField(
-                              controller: _contentController,
-                              maxLines: null,
-                              minLines: 10,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: AeroColors.darkText,
-                                height: 1.5,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Escribe tus pensamientos fluidos aquí...',
-                                hintStyle: TextStyle(color: AeroColors.mutedText.withOpacity(0.5)),
-                                border: InputBorder.none,
-                              ),
+                            decoration: InputDecoration(
+                              hintText: 'Título vibrante...',
+                              hintStyle: TextStyle(color: AeroColors.mutedText.withOpacity(0.5)),
+                              border: InputBorder.none,
                             ),
-                            const SizedBox(height: 20),
-                            _buildColorPicker(),
-                          ],
-                        ),
+                          ),
+                          const Divider(color: AeroColors.glassWhite, thickness: 2),
+                          TextField(
+                            controller: _contentController,
+                            maxLines: null,
+                            minLines: 10,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AeroColors.darkText,
+                              height: 1.5,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Escribe tus pensamientos fluidos aquí...',
+                              hintStyle: TextStyle(color: AeroColors.mutedText.withOpacity(0.5)),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          _buildColorPicker(),
+                        ],
                       ),
                     ),
                   ),

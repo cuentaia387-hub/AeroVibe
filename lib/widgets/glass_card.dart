@@ -10,6 +10,7 @@ class GlassCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
   final VoidCallback? onTap;
+  final Color? tintColor;
 
   const GlassCard({
     Key? key,
@@ -20,6 +21,7 @@ class GlassCard extends StatelessWidget {
     this.margin,
     this.borderRadius = 20,
     this.onTap,
+    this.tintColor,
   }) : super(key: key);
 
   @override
@@ -50,6 +52,12 @@ class GlassCard extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Stack(
             children: [
+              if (tintColor != null)
+                Positioned.fill(
+                  child: Container(
+                    color: tintColor!.withOpacity(0.15),
+                  ),
+                ),
               // Glossy inner highlight
               Positioned(
                 top: 0,
