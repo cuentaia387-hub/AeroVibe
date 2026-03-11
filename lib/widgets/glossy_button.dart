@@ -45,8 +45,10 @@ class _GlossyButtonState extends State<GlossyButton> with SingleTickerProviderSt
   }
 
   void _onTapDown(TapDownDetails details) => _controller.forward();
+  void _onTapUp(TapUpDetails details) {
     _controller.reverse();
     widget.onPressed();
+  }
   void _onTapCancel() => _controller.reverse();
 
   @override

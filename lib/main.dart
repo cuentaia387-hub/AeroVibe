@@ -22,10 +22,12 @@ void main() {
     ),
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  runApp(
     ChangeNotifierProvider(
       create: (_) => NoteProvider(),
       child: const AeroApp(),
     ),
+  );
 }
 
 class AeroApp extends StatelessWidget {
