@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../services/audio_service.dart';
 
 class GlossyButton extends StatefulWidget {
   final String text;
@@ -46,11 +45,8 @@ class _GlossyButtonState extends State<GlossyButton> with SingleTickerProviderSt
   }
 
   void _onTapDown(TapDownDetails details) => _controller.forward();
-  void _onTapUp(TapUpDetails details) {
     _controller.reverse();
-    AudioService().playClick();
     widget.onPressed();
-  }
   void _onTapCancel() => _controller.reverse();
 
   @override

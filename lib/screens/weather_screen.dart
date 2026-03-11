@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/aero_icons.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
@@ -76,9 +77,9 @@ class WeatherScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildCircularProgress('CPU', 0.35, AeroColors.waterBlue, Icons.memory),
-              _buildCircularProgress('RAM', 0.68, AeroColors.sunnyYellow, Icons.speed),
-              _buildCircularProgress('Batería', 0.92, AeroColors.natureGreen, Icons.battery_charging_full),
+              _buildCircularProgress('CPU', 0.35, AeroColors.waterBlue, const AeroCPUIcon(size: 32)),
+              _buildCircularProgress('RAM', 0.68, AeroColors.sunnyYellow, const AeroRAMIcon(size: 32)),
+              _buildCircularProgress('Batería', 0.92, AeroColors.natureGreen, const AeroBatteryIcon(size: 32)),
             ],
           ),
         ],
@@ -86,7 +87,7 @@ class WeatherScreen extends StatelessWidget {
     ).animate().slideY(begin: 0.2, duration: 400.ms);
   }
 
-  Widget _buildCircularProgress(String label, double percent, Color color, IconData icon) {
+  Widget _buildCircularProgress(String label, double percent, Color color, Widget aeroIcon) {
     return Column(
       children: [
         Stack(
@@ -102,7 +103,7 @@ class WeatherScreen extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
             ),
-            Icon(icon, color: AeroColors.darkText.withOpacity(0.8), size: 28),
+            aeroIcon,
           ],
         ),
         const SizedBox(height: 12),
@@ -132,7 +133,7 @@ class WeatherScreen extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.storage_rounded, color: AeroColors.waterBlue),
+                child: const AeroStorageIcon(size: 24),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -173,7 +174,7 @@ class WeatherScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               boxShadow: [BoxShadow(color: AeroColors.waterBlue.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))],
             ),
-            child: const Icon(Icons.wifi_rounded, color: Colors.white, size: 32),
+            child: const AeroNetworkIcon(size: 32),
           ),
           const SizedBox(width: 16),
           const Expanded(

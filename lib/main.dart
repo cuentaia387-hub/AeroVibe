@@ -10,7 +10,6 @@ import 'screens/settings_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'widgets/bubble_painter.dart';
 import 'providers/note_provider.dart';
-import 'providers/settings_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,15 +22,10 @@ void main() {
     ),
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => NoteProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
-      ],
+    ChangeNotifierProvider(
+      create: (_) => NoteProvider(),
       child: const AeroApp(),
     ),
-  );
 }
 
 class AeroApp extends StatelessWidget {

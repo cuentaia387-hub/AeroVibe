@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'aero_icons.dart';
 
 class AeroBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -41,10 +42,10 @@ class AeroBottomNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(0, Icons.dashboard_rounded, 'Inicio'),
-                _buildNavItem(1, Icons.explore_rounded, 'Explorar'),
-                _buildNavItem(2, Icons.cloud_rounded, 'Clima'),
-                _buildNavItem(3, Icons.settings_rounded, 'Ajustes'),
+                _buildNavItem(0, const AeroHomeIcon(), 'Inicio'),
+                _buildNavItem(1, const AeroNotesIcon(), 'Notas'),
+                _buildNavItem(2, const AeroCenterIcon(), 'Centro'),
+                _buildNavItem(3, const AeroSettingsIcon(), 'Ajustes'),
               ],
             ),
           ),
@@ -53,7 +54,7 @@ class AeroBottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(int index, Widget aeroIcon, String label) {
     final isSelected = currentIndex == index;
     final color = isSelected ? AeroColors.waterBlue : AeroColors.mutedText;
 
@@ -82,9 +83,9 @@ class AeroBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedScale(
-                scale: isSelected ? 1.1 : 1.0,
+                scale: isSelected ? 1.2 : 1.0,
                 duration: const Duration(milliseconds: 200),
-                child: Icon(icon, color: color, size: 24),
+                child: aeroIcon,
               ),
               if (isSelected) ...[
                 const SizedBox(height: 2),

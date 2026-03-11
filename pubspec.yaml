@@ -26,9 +26,6 @@ dependencies:
 
   # Networking & Real Data
   http: ^1.2.0
-
-  # Audio
-  audioplayers: ^6.1.0
   
   # State management
   provider: ^6.1.2
@@ -50,4 +47,3 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/audio/
