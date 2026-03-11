@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
-import '../widgets/glass_card.dart';
+import '../widgets/liquid_glass_card.dart';
 import '../widgets/glossy_button.dart';
 import '../widgets/aero_icons.dart';
 
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int displayHour = _currentTime.hour > 12 ? _currentTime.hour - 12 : _currentTime.hour;
     if (displayHour == 0) displayHour = 12;
 
-    return GlassCard(
+    return LiquidGlassCard(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       child: Column(
         children: [
