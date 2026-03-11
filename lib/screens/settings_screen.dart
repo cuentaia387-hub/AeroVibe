@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import 'package:provider/provider.dart';
+import '../providers/settings_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -110,6 +112,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.access_time,
             value: _24HourTime,
             onChanged: (v) => setState(() => _24HourTime = v),
+          ),
+          const Divider(color: AeroColors.glassWhite),
+          Consumer<SettingsProvider>(
+            builder: (context, settings, child) => _buildToggleTile(
+              title: 'Sonidos Aero',
+              icon: Icons.volume_up_rounded,
+              value: settings.soundEnabled,
+              onChanged: (v) => settings.toggleSound(v),
+            ),
           ),
         ],
       ),

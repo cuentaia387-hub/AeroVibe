@@ -5,6 +5,7 @@ import '../widgets/glass_card.dart';
 import '../widgets/glossy_button.dart';
 import '../providers/note_provider.dart';
 import '../models/aero_note.dart';
+import '../services/audio_service.dart';
 
 class NoteEditorScreen extends StatefulWidget {
   final AeroNote? note; // Null means new note
@@ -60,6 +61,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       provider.updateNote(widget.note!.id, title, content, _selectedColor);
     }
 
+    AudioService().playChime();
     Navigator.pop(context);
   }
 
