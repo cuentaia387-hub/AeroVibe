@@ -38,6 +38,7 @@ class AeroIconBase extends StatelessWidget {
         border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
       ),
       child: Stack(
+        alignment: Alignment.center,
         children: [
           // Glossy Top Highlight
           Positioned(
@@ -59,22 +60,28 @@ class AeroIconBase extends StatelessWidget {
               ),
             ),
           ),
-          Center(
-            child: Transform.scale(
-              scale: 0.6,
-              child: child,
+          // The actual icon
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: size * 0.65,
+              height: size * 0.65,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: child,
+              ),
             ),
           ),
           // Inner Bubbles Effect
           Positioned(
-            bottom: size * 0.1,
+            bottom: size * 0.15,
             right: size * 0.2,
             child: Container(
-              width: size * 0.15,
-              height: size * 0.15,
+              width: size * 0.12,
+              height: size * 0.12,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.25),
+                color: Colors.white.withOpacity(0.3),
               ),
             ),
           ),
