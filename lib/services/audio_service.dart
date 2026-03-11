@@ -30,10 +30,10 @@ class AudioService {
         ),
         iOS: AudioContextIOS(
           category: AVAudioSessionCategory.ambient,
-          options: [
+          options: {
             AVAudioSessionOptions.mixWithOthers,
             AVAudioSessionOptions.duckOthers,
-          ],
+          },
         ),
       ));
 
