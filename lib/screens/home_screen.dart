@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
+import '../widgets/glass_card.dart';
 import '../widgets/liquid_glass_card.dart';
 import '../widgets/glossy_button.dart';
 import '../widgets/aero_icons.dart';
