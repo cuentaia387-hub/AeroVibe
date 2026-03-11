@@ -24,11 +24,11 @@ class AudioService {
       // Configuración global de audio para Android
       await AudioPlayer.global.setAudioContext(AudioContext(
         android: const AudioContextAndroid(
-          usage: AndroidUsage.notification,
+          usageType: AndroidUsageType.notification,
           contentType: AndroidContentType.sonification,
           audioFocus: AndroidAudioFocus.gainTransientMayDuck,
         ),
-        iOS: const AudioContextIOS(
+        iOS: AudioContextIOS(
           category: AVAudioSessionCategory.ambient,
           options: [
             AVAudioSessionOptions.mixWithOthers,
