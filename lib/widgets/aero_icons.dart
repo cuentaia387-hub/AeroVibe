@@ -147,6 +147,20 @@ class AeroSettingsIcon extends StatelessWidget {
   }
 }
 
+class AeroClockIcon extends StatelessWidget {
+  final double size;
+  const AeroClockIcon({Key? key, this.size = 28}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AeroIconBase(
+      size: size,
+      colors: const [AeroColors.waterBlue, AeroColors.skyBlue],
+      child: const Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 40),
+    );
+  }
+}
+
 class AeroCPUIcon extends StatelessWidget {
   final double size;
   const AeroCPUIcon({Key? key, this.size = 28}) : super(key: key);

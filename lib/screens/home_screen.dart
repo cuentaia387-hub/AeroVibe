@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/glossy_button.dart';
+import '../widgets/aero_icons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -107,12 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       child: Column(
         children: [
-          Icon(
-            Icons.access_time_filled_rounded,
-            size: 40,
-            color: AeroColors.waterBlue.withOpacity(0.8),
-          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-           .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2.seconds),
+          const AeroClockIcon(size: 60)
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 3.seconds),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -123,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 '$displayHour:$minute',
                 style: const TextStyle(
                   fontSize: 72,
-                  fontWeight: FontWeight.w200, // Thin modern font
+                  fontWeight: FontWeight.w400, // Slightly bolder as requested
                   color: AeroColors.waterBlue,
                   letterSpacing: -4,
                   fontFeatures: [FontFeature.tabularFigures()],
